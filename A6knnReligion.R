@@ -1,11 +1,15 @@
+list.of.packages <- c("corrplot", "caret", "dplyr", "class", "kknn")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 library(corrplot)
 library(caret)
 library(dplyr)
 library(class)
 library(kknn)
 
-setwd("~/Documents/data analytics/assignment 6")
-source("A6cleaning.R")
+setwd("~/Documents/data analytics/assignment 6") 
+source("A6cleaning.R")## run A6cleaning first, it's essential!!
 
 rm(prof)
 

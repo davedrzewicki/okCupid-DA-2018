@@ -1,10 +1,25 @@
+list.of.packages <- c("readr", "lubridate", "dummies", "dplyr", "okcupiddata", "tree")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 library(readr)
 library(lubridate)
-setwd("~/Documents/data analytics/assignment 6")
-profiles <- read_csv("profiles.csv")
+#setwd("~/Documents/data analytics/assignment 6")
+#profiles <- read_csv("profiles.csv") ## I originally had a csv file that I uploaded. I am changing everything
+## to include the dataset from okcupiddata
+library(okcupiddata)
+data("profiles")
+
 
 
 colnames(profiles)
+
+# [1] "age"         "body_type"   "diet"        "drinks"      "drugs"       "education"   "ethnicity"   "height"     
+# [9] "income"      "job"         "last_online" "location"    "offspring"   "orientation" "pets"        "religion"   
+# [17] "sex"         "sign"        "smokes"      "speaks"      "status"      "essay0"   
+
+## the file that is in the okcupiddata package only has essay0, my original script used a csv dataset that had
+## 10 essays
 
 # [1] "age"         "body_type"   "diet"        "drinks"      "drugs"       "education"  
 # [7] "essay0"      "essay1"      "essay2"      "essay3"      "essay4"      "essay5"     
@@ -21,8 +36,7 @@ rm(profiles)
 #plot(sort(rowMeans(is.na(prof)))) ## elbow at about 0.4
 prof <- prof[-which(rowMeans(is.na(prof)) > 0.4), ]
 
-cols <- c("essay0", "essay1", "essay2", "essay3", "essay4", "essay5", "essay6", "essay7",
-          "essay8", "essay9")
+cols <- "essay0"
 
 
 prof[cols] <- lapply(prof[cols], nchar)
@@ -196,15 +210,15 @@ prof$location[which(prof$location != "berkeley, california"
 ## Offspring
 #############################################################################################################
 
-prof[(prof$offspring=="doesn&rsquo;t have kids, and doesn&rsquo;t want any" 
-      | prof$offspring=="doesn&rsquo;t want kids"
-      | prof$offspring=="doesn&rsquo;t want kids"
-      |prof$offspring=="has a kid, but doesn&rsquo;t want more"
-      |prof$offspring=="has kids, but doesn&rsquo;t want more"
+prof[(prof$offspring=="doesn't have kids, and doesn't want any" 
+      | prof$offspring=="doesn't want kids"
+      | prof$offspring=="doesn't want kids"
+      |prof$offspring=="has a kid, but doesn't want more"
+      |prof$offspring=="has kids, but doesn't want more"
 )& !is.na(prof$offspring), ]$offspring <- "does not want kid"
 
-prof[(prof$offspring=="doesn&rsquo;t have kids, but might want them" 
-      | prof$offspring=="doesn&rsquo;t have kids, but wants them"
+prof[(prof$offspring=="doesn't have kids, but might want them" 
+      | prof$offspring=="doesn't have kids, but wants them"
       | prof$offspring=="has a kid, and might want more"
       |prof$offspring=="has a kid, and wants more"
       |prof$offspring=="has kids, and might want more"
@@ -213,20 +227,20 @@ prof[(prof$offspring=="doesn&rsquo;t have kids, but might want them"
       |prof$offspring=="wants kids"
 )& !is.na(prof$offspring), ]$offspring <- "wants kid"
 
-prof[(prof$offspring=="doesn&rsquo;t have kids"
-      |prof$offspring=="doesn&rsquo;t have kids, and doesn&rsquo;t want any" 
-      |prof$offspring=="doesn&rsquo;t have kids, but might want them"
-      |prof$offspring=="doesn&rsquo;t have kids, but wants them"
+prof[(prof$offspring=="doesn't have kids"
+      |prof$offspring=="doesn't have kids, and doesn't want any" 
+      |prof$offspring=="doesn't have kids, but might want them"
+      |prof$offspring=="doesn't have kids, but wants them"
 )& !is.na(prof$offspring), ]$offspring <- "does not have kid"
 
 prof[(prof$offspring=="has a kid" 
       | prof$offspring=="has a kid, and might want more"
       | prof$offspring=="has a kid, and wants more"
-      | prof$offspring=="has a kid, but doesn&rsquo;t want more"
+      | prof$offspring=="has a kid, but doesn't want more"
       |prof$offspring=="has kids"
       |prof$offspring=="has kids, and might want more"
       |prof$offspring=="has kids, and wants more"
-      |prof$offspring=="has kids, but doesn&rsquo;t want more"
+      |prof$offspring=="has kids, but doesn't want more"
 )& !is.na(prof$offspring), ]$offspring <- "has kid"
 
 #############################################################################################################
@@ -356,18 +370,18 @@ prof[(prof$sign=="aquarius"
       |prof$sign=="virgo"
 )& !is.na(prof$sign), ]$sign <- "sign given"
 
-prof[(prof$sign=="aquarius but it doesn&rsquo;t matter" 
-      | prof$sign=="aries but it doesn&rsquo;t matter"
-      | prof$sign=="cancer but it doesn&rsquo;t matter"
-      |prof$sign=="capricorn but it doesn&rsquo;t matter"
-      |prof$sign=="gemini but it doesn&rsquo;t matter"
-      |prof$sign=="leo but it doesn&rsquo;t matter"
-      |prof$sign=="libra but it doesn&rsquo;t matter"
-      |prof$sign=="pisces but it doesn&rsquo;t matter"
-      |prof$sign=="sagittarius but it doesn&rsquo;t matter"
-      |prof$sign=="scorpio but it doesn&rsquo;t matter"
-      |prof$sign=="taurus but it doesn&rsquo;t matter"
-      |prof$sign=="virgo but it doesn&rsquo;t matter"
+prof[(prof$sign=="aquarius but it doesn't matter" 
+      | prof$sign=="aries but it doesn't matter"
+      | prof$sign=="cancer but it doesn't matter"
+      |prof$sign=="capricorn but it doesn't matter"
+      |prof$sign=="gemini but it doesn't matter"
+      |prof$sign=="leo but it doesn't matter"
+      |prof$sign=="libra but it doesn't matter"
+      |prof$sign=="pisces but it doesn't matter"
+      |prof$sign=="sagittarius but it doesn't matter"
+      |prof$sign=="scorpio but it doesn't matter"
+      |prof$sign=="taurus but it doesn't matter"
+      |prof$sign=="virgo but it doesn't matter"
 )& !is.na(prof$sign), ]$sign <- "doesnt matter"
 
 prof[(prof$sign=="aquarius and it matters a lot" 
@@ -384,18 +398,18 @@ prof[(prof$sign=="aquarius and it matters a lot"
       |prof$sign=="virgo and it matters a lot"
 )& !is.na(prof$sign), ]$sign <- "matters"
 
-prof[(prof$sign=="aquarius and it&rsquo;s fun to think about" 
-      | prof$sign=="aries and it&rsquo;s fun to think about"
-      | prof$sign=="cancer and it&rsquo;s fun to think about"
-      |prof$sign=="capricorn and it&rsquo;s fun to think about"
-      |prof$sign=="gemini and it&rsquo;s fun to think about"
-      |prof$sign=="leo and it&rsquo;s fun to think about"
-      |prof$sign=="libra and it&rsquo;s fun to think about"
-      |prof$sign=="pisces and it&rsquo;s fun to think about"
-      |prof$sign=="sagittarius and it&rsquo;s fun to think about"
-      |prof$sign=="scorpio and it&rsquo;s fun to think about"
-      |prof$sign=="taurus and it&rsquo;s fun to think about"
-      |prof$sign=="virgo and it&rsquo;s fun to think about"
+prof[(prof$sign=="aquarius and it's fun to think about" 
+      | prof$sign=="aries and it's fun to think about"
+      | prof$sign=="cancer and it's fun to think about"
+      |prof$sign=="capricorn and it's fun to think about"
+      |prof$sign=="gemini and it's fun to think about"
+      |prof$sign=="leo and it's fun to think about"
+      |prof$sign=="libra and it's fun to think about"
+      |prof$sign=="pisces and it's fun to think about"
+      |prof$sign=="sagittarius and it's fun to think about"
+      |prof$sign=="scorpio and it's fun to think about"
+      |prof$sign=="taurus and it's fun to think about"
+      |prof$sign=="virgo and it's fun to think about"
 )& !is.na(prof$sign), ]$sign <- "fun to think about"
 
 #############################################################################################################
@@ -431,8 +445,11 @@ library(tree)
 prof <- na.tree.replace(prof)
 library(dummies)
 library(dplyr)
-select(prof, -religion)
-dummy.prof <- dummy.data.frame(select(prof, -religion, -seriousness))
-dummy.prof <- cbind(dummy.prof, select(prof, religion, seriousness))
+#select(prof, -religion)
+dummy.prof <- dummy.data.frame(select(prof, -religion, -seriousness)) ## I'm making dummy variables for knn
+## though knn is not a good predictor, I see if I can use it to determine either religion or seriousness
+
+dummy.prof <- cbind(dummy.prof, select(prof, religion, seriousness)) ## religion and seriousness are the only 
+## columns that aren't binary
 
 str(prof)
