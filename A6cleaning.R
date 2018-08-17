@@ -37,15 +37,22 @@ rm(profiles)
 prof <- prof[-which(rowMeans(is.na(prof)) > 0.4), ]
 
 cols <- "essay0"
+sum(is.na(prof$essay0))
+nrow(prof$essay0 == 0)
 
+length(prof$essay0[is.na(prof$essay0)])
 
 prof[cols] <- lapply(prof[cols], nchar)
+
+prof$essay0[prof$essay0==0] <- 1
+prof$essay0[is.na(prof$essay0)] <- 1
+
 prof[cols] <- lapply(prof[cols], log)
 prof[cols] <- lapply(prof[cols], round)
-prof[cols][is.na(prof[cols])] <-0
+
 rm(cols)
 
-       
+summary(prof$essay0)       
 
 #############################################################################################################
 ## age

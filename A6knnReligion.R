@@ -1,3 +1,7 @@
+#setwd("~/Documents/data analytics/assignment 6") 
+#source("A6cleaning.R")## run A6cleaning first, it's essential!!
+
+
 list.of.packages <- c("corrplot", "caret", "dplyr", "class", "kknn")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
@@ -8,9 +12,6 @@ library(dplyr)
 library(class)
 library(kknn)
 
-setwd("~/Documents/data analytics/assignment 6") 
-source("A6cleaning.R")## run A6cleaning first, it's essential!!
-
 rm(prof)
 
 #############################################################################################################
@@ -19,12 +20,17 @@ rm(prof)
 
 colnames(dummy.prof)
 dummy.prof <-select(dummy.prof[dummy.prof$religion != "NA",], -seriousness)
+str(dummy.prof$religion)
+dummy.prof <-na.omit(dummy.prof)
 
 dummy.prof$religion <-droplevels(dummy.prof$religion)
+levels(dummy.prof$religion)
 
 set.seed(12345)
+summary(dummy.prof)
+fit.kknn <- cv.kknn(religion~., dummy.prof, kcv = 5)
 
-fit.kknn <- cv.kknn(religion ~., dummy.prof, kcv = 5)
+
 fit.kknn <- as.data.frame(fit.kknn)
 y <- levels(dummy.prof$religion)[fit.kknn$y]
 yhat <- levels(dummy.prof$religion)[fit.kknn$yhat] 
