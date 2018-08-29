@@ -1,38 +1,41 @@
-library(readr)
-setwd("~/Documents/data analytics/assignment 6")
-profiles <- read_csv("profiles.csv")
+list.of.packages <- c("readr", "tree", "ggplot2")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+library(okcupiddata)
+data("profiles")
 
 prof <- profiles
-str(prof) ## ints and char
 rm(profiles)
 
-cols <- c("essay0", "essay1", "essay2", "essay3", "essay4", "essay5", "essay6", "essay7",
-  "essay8", "essay9")
-prof[cols] <- lapply(prof[cols], nchar)
-prof[cols] <- lapply(prof[cols], log)
-prof[cols] <- lapply(prof[cols], round)
-rm(cols)
+colnames(prof)
+#[1] "age"         "body_type"   "diet"        "drinks"      "drugs"       "education"   "ethnicity"   "height"     
+#[9] "income"      "job"         "last_online" "location"    "offspring"   "orientation" "pets"        "religion"   
+#[17] "sex"         "sign"        "smokes"      "speaks"      "status"      "essay0"     
 
-str(prof) ## ints and char
-prof[prof==""] <- NA
-cols <- c("body_type", "diet", "drinks", "drugs", "education", "ethnicity",
-  "job", "location", "offspring", "orientation", "pets", "religion", "sex",
-  "sign", "smokes", "speaks", "status")
-prof[cols] <- lapply(prof[cols], factor)
-prof$last_online <- as.Date(prof$last_online)
+hist(prof$age) ## heavy tail on higher ages
+plot(as.factor(prof$body_type)) 
+plot(as.factor(prof$diet)) ## bin?
+plot(as.factor(prof$drinks))
+plot(as.factor(prof$drugs))
+
+library(ggplot2)
+ggplot(data=subset(prof, !is.na(drugs)), aes(x=drugs)) + 
+  geom_bar(stat="count")
+ggplot(data=prof, aes(x=drugs)) + geom_bar(stat="count")
+
+ggplot(data=subset(prof, !is.na(education)), aes(x=education)) + 
+  geom_bar(stat="count") ## bin ?
+ggplot(data=prof, aes(x=education)) + geom_bar(stat="count")
+
+hist(nchar(prof$essay0))
+hist(log(nchar(prof$essay0)))
 
 
-hist(prof$age)
-hist(as.numeric(prof$body_type)) ## weird distribution, bin
-hist(as.numeric(prof$diet)) ## bin?
-hist(as.numeric(prof$drinks))
-hist(as.numeric(prof$drugs))
-hist(as.numeric(prof$education)) ## bin?
-hist(prof$essay0)
-
-
-hist(as.numeric(prof$ethnicity)) ## hundreds of ethnicity factors.
+plot(as.factor(prof$ethnicity))
+length(levels(as.factor(prof$ethnicity))) ## 217 levels
 ## maybe use top 5 or so?
+
 hist(prof$height)
 summary(prof$height) ## min 1.0 ... maybe look at shortest height possible, and remove
 ## anyone below that
@@ -40,17 +43,37 @@ hist(prof$income)
 hist(log(prof$income)) ## not a "good" distribution. Most poeple didn't answer
 fivenum(prof$income)
 
-hist(as.numeric(prof$job)) ## 20 or so categories bin
-hist(as.numeric(prof$last_online)) ## exponential distribution
-hist(as.numeric(prof$location)) ## hundreds of locations. 
-hist(as.numeric(prof$offspring))
-hist(as.numeric(prof$pets))
-hist(as.numeric(prof$religion)) ## over 40, I'm going to want to bin this
-hist(as.numeric((prof$sex))) ## not 50-50. More men
-hist(as.numeric(prof$sign)) ## bin this
-hist(as.numeric(prof$smokes))
-hist(as.numeric(prof$speaks)) ## way too many. Maybe take top candidate (english)
-hist(as.numeric(prof$status))
+plot(as.factor(prof$job))## 20 or so categories bin
 
-rm(cols)
+ggplot(data=subset(prof, !is.na(last_online)), aes(x=last_online)) + 
+  geom_histogram(binwidth = 1e6)
 
+ggplot(data=subset(prof, !is.na(location)), aes(x=location)) + 
+  geom_bar(stat="count")
+length(levels(as.factor(prof$location))) ## 199 locations, 5 main ones 
+
+ggplot(data=subset(prof, !is.na(offspring)), aes(x=offspring)) + 
+  geom_bar(stat="count")
+ggplot(data=subset(prof, !is.na(pets)), aes(x=pets)) + 
+  geom_bar(stat="count")
+ggplot(data=subset(prof, !is.na(religion)), aes(x=religion)) + 
+  geom_bar(stat="count") ## even distributions
+length(levels(as.factor(prof$religion))) ## 45 levels, I'm going to want to bin this
+
+ggplot(data=subset(prof, !is.na(sex)), aes(x=sex)) + 
+  geom_bar(stat="count")## not 50-50. More men
+ggplot(data=subset(prof, !is.na(sign)), aes(x=sign)) + 
+  geom_bar(stat="count") ## bin this
+
+length(levels(as.factor(prof$sign))) ## 48 levels
+ggplot(data=prof, aes(x=smokes)) + 
+  geom_bar(stat="count")
+#ggplot(data=prof, aes(x=speaks)) + 
+#  geom_bar(stat="count")
+length(levels(as.factor(prof$speaks)))## way too many. Maybe take top candidate (english)
+
+
+ggplot(data=prof, aes(x=status)) + 
+  geom_bar(stat="count")
+#rm(list=ls())
+#dev.off()
